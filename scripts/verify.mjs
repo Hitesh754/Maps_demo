@@ -13,7 +13,10 @@ function runStep(name, cmd) {
   }
 }
 
-// 1. Monorepo JS/TS quality gates
+// 1. Region Configuration Validation
+runStep("Region Configuration Validation", "node ./scripts/region/validate-region.mjs");
+
+// 2. Monorepo JS/TS quality gates
 runStep("TypeScript & Lint Quality Gates", "pnpm turbo run lint typecheck test build");
 
 // 2. Go Backend quality gates

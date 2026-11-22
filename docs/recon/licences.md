@@ -28,6 +28,8 @@ This document establishes the intellectual property, copyright, and licence comp
 
 ### 2.2. Geofabrik Extracts
 - **Licence:** Open Database License (ODbL) 1.0 (derived from OpenStreetMap).
+- **Target Region:** Vadodara, Gujarat, India (`western-zone-latest.osm.pbf`).
+- **Data Vintage:** `2026-11-22T08:07:36Z` (MD5: `69f51e34d053c4212e73ef466e4ca4a1`).
 - **Attribution Obligation:** OpenStreetMap attribution as above. Customary citation: `"Extracts provided by Geofabrik"`.
 - **Where Attribution Must Appear:** `docs/`, `NOTICE`, and platform data provenance documentation.
 

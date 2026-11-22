@@ -109,6 +109,29 @@ pnpm dev:mobile
 # Press 'a' for Android emulator, 'w' for Web, or scan QR with Expo Go / Dev Client
 ```
 
+---
+
+## Region Data Pipeline & Basemap Vector Tiles (Prompt 03)
+
+Meridian generates and self-hosts its own vector basemap from OpenStreetMap data using Planetiler and `go-pmtiles`:
+
+```powershell
+# 1. Validate region configuration
+pnpm region:validate
+
+# 2. Acquire OSM extract, clip context buffer, and build PMTiles archive
+pnpm region:build
+
+# 3. Start Tile Server (port 8082) & Map Assets Server (port 8083)
+pnpm dev:stack:tiles
+
+# 4. Verify vector tiles and decoded layers at center across zooms (z0, z6, z10, z14)
+pnpm region:verify
+
+# 5. Launch developer basemap preview harness
+# Open tools/map-preview/index.html in any modern browser
+```
+
 > **Mobile Network Note:**
 > - **Android Emulator:** Uses `http://10.0.2.2:8080` to communicate with the host API.
 > - **iOS Simulator:** Uses `http://127.0.0.1:8080`.

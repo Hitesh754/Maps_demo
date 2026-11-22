@@ -9,17 +9,24 @@
     "dev:stack": "docker compose -f infra/compose/docker-compose.yml up -d",
     "dev:stack:down": "docker compose -f infra/compose/docker-compose.yml down",
     "dev:stack:reset": "node ./scripts/dev-stack-reset.mjs",
+    "dev:stack:tiles": "docker compose -f infra/compose/docker-compose.yml --profile tiles up -d",
     "db:migrate": "docker compose -f infra/compose/docker-compose.yml run --rm migrate",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:integration": "powershell -ExecutionPolicy Bypass -Command \"cd backend; go test -race -tags=integration -v ./...\"",
     "build": "turbo run build",
+    "region:validate": "node ./scripts/region/validate-region.mjs",
+    "region:build": "powershell -ExecutionPolicy Bypass -File ./scripts/region/build-region.ps1",
+    "region:verify": "node ./scripts/region/verify-tiles.mjs",
     "verify": "node ./scripts/verify.mjs"
   },
   "devDependencies": {
-    "turbo": "2.11.13",
+    "@mapbox/vector-tile": "^3.0.0",
+    "@types/pbf": "^3.0.5",
+    "pbf": "^5.2.0",
     "prettier": "3.5.3",
+    "turbo": "2.11.13",
     "typescript": "5.8.2"
   }
 }

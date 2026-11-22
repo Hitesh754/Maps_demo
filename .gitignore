@@ -37,9 +37,11 @@ backend/tmp/
 
 # Docker volumes & local data
 infra/compose/data/
-data/
+/data/
 *.pmtiles
-*.pbf
+*.osm.pbf
+/data/**/*.pbf
+!assets/map/glyphs/**
 .minio.sys/
 
 # Logs

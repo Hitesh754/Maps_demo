@@ -1,0 +1,14 @@
+{
+  "$schema": "./region.schema.json",
+  "name": "Vadodara, Gujarat, India",
+  "slug": "vadodara",
+  "countryCode": "IN",
+  "bbox": [73.11, 22.24, 73.28, 22.37],
+  "center": [73.1812, 22.3072],
+  "defaultZoom": 12,
+  "minZoom": 0,
+  "maxZoom": 15,
+  "maxBoundsPadding": 0.05,
+  "showAdminBoundaries": false,
+  "dataSource": "OpenStreetMap contributors (ODbL)"
+}

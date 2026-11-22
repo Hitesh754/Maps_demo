@@ -1,0 +1,61 @@
+Meridian Geospatial Intelligence Platform
+Copyright (c) 2026 Meridian Project Contributors
+
+This product includes software and data developed by third parties:
+
+================================================================================
+1. OpenStreetMap (OSM) Data & Attribution
+================================================================================
+Contains information from OpenStreetMap, which is made available under the
+Open Database License (ODbL) 1.0:
+https://opendatacommons.org/licenses/odbl/1.0/
+
+OpenStreetMap (c) OpenStreetMap contributors:
+https://www.openstreetmap.org/copyright
+
+Target Region Extract:
+- Region: Vadodara, Gujarat, India
+- Source Provider: Geofabrik GmbH (https://download.geofabrik.de)
+- Upstream File: western-zone-latest.osm.pbf
+- MD5 Checksum: 69f51e34d053c4212e73ef466e4ca4a1
+- Data Vintage: 2026-11-22T08:07:36Z
+
+================================================================================
+2. OpenMapTiles Vector Tile Schema
+================================================================================
+The vector tiles generated for this project use the OpenMapTiles schema:
+https://github.com/openmaptiles/openmaptiles
+
+OpenMapTiles (c) OpenMapTiles team
+Licensed under the Creative Commons Attribution 4.0 International License (CC-BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+
+================================================================================
+3. Planetiler Basemap Compiler
+================================================================================
+Vector tile generation is performed using Planetiler:
+https://github.com/onthegomap/planetiler
+
+Copyright (c) 2021-2026 On-The-Go-Map
+Licensed under the Apache License, Version 2.0:
+https://www.apache.org/licenses/LICENSE-2.0
+
+================================================================================
+4. MapLibre GL
+================================================================================
+Map rendering utilizes MapLibre GL JS and MapLibre Native:
+https://maplibre.org/
+
+Copyright (c) 2020-2026 MapLibre contributors
+Licensed under the BSD 3-Clause License:
+https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt
+
+================================================================================
+5. Glyphs and Typography (Noto Sans)
+================================================================================
+Map label typography utilizes Noto Sans Regular and Noto Sans Bold:
+https://fonts.google.com/noto/specimen/Noto+Sans
+
+Copyright (c) Google LLC
+Licensed under the SIL Open Font License, Version 1.1:
+https://openfontlicense.org/

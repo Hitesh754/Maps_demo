@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meridian — Basemap Style & Vector Tile Preview Harness</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    #header { height: 50px; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #334155; }
+    #header h1 { font-size: 16px; font-weight: 600; }
+    .controls { display: flex; gap: 8px; align-items: center; }
+    button, select { background: #1e293b; color: #f8fafc; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+    button:hover { background: #334155; }
+    #readout { font-size: 12px; color: #94a3b8; font-family: monospace; }
+    #map { flex: 1; width: 100%; position: relative; }
+    .legend-panel { position: absolute; bottom: 24px; left: 16px; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(4px); color: #f8fafc; padding: 12px; border-radius: 8px; font-size: 12px; border: 1px solid #334155; z-index: 10; max-width: 240px; }
+    .legend-panel h4 { font-size: 13px; margin-bottom: 8px; color: #38bdf8; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 4px 0; }
+    .toggle-row input { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <h1>Meridian Basemap Preview</h1>
+      <span style="font-size: 12px; background: #0369a1; padding: 2px 8px; border-radius: 12px;">Vadodara, IN</span>
+    </div>
+    <div class="controls">
+      <span id="readout">Zoom: -- | Lng: --, Lat: --</span>
+      <select id="themeSelector">
+        <option value="light">Light Theme</option>
+        <option value="dark">Dark Theme</option>
+      </select>
+      <button id="fitRegionBtn">Fit Region</button>
+    </div>
+  </div>
+
+  <div id="map">
+    <div class="legend-panel">
+      <h4>Layer Controls</h4>
+      <div class="toggle-row">
+        <span>Buildings (z13+)</span>
+        <input type="checkbox" id="toggleBuildings" checked>
+      </div>
+      <div class="toggle-row">
+        <span>Road Network</span>
+        <input type="checkbox" id="toggleRoads" checked>
+      </div>
+      <div class="toggle-row">
+        <span>Water Features</span>
+        <input type="checkbox" id="toggleWater" checked>
+      </div>
+      <div class="toggle-row">
+        <span>Landuse & Parks</span>
+        <input type="checkbox" id="toggleLanduse" checked>
+      </div>
+      <div class="toggle-row">
+        <span>Labels</span>
+        <input type="checkbox" id="toggleLabels" checked>
+      </div>
+      <div class="toggle-row">
+        <span>Admin Boundaries</span>
+        <input type="checkbox" id="toggleAdmin">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const REGION_CENTER = [73.1812, 22.3072];
+    const REGION_BBOX = [73.11, 22.24, 73.28, 22.37];
+    const TILES_BASE_URL = "http://127.0.0.1:8082";
+    const ASSETS_BASE_URL = "http://127.0.0.1:8083";
+
+    function generateStyle(theme, showAdmin) {
+      const isDark = theme === "dark";
+      const colors = {
+        background: isDark ? "#11161d" : "#f5f4f0",
+        water: isDark ? "#182433" : "#b8d5e5",
+        waterway: isDark ? "#1d2c3e" : "#a2c7dc",
+        park: isDark ? "#17281f" : "#d8ebd2",
+        landcover: isDark ? "#15241b" : "#cfdfcb",
+        buildingFill: isDark ? "#1e293b" : "#e6e9ee",
+        buildingStroke: isDark ? "#334155" : "#cbd5e1",
+        roadCasing: isDark ? "#0f172a" : "#cbd5e1",
+        roadMinor: isDark ? "#283545" : "#ffffff",
+        roadSecondary: isDark ? "#3d4b5c" : "#fbe3c7",
+        roadPrimary: isDark ? "#c07828" : "#f6ad55",
+        roadMotorway: isDark ? "#d96522" : "#e06c28",
+        adminBoundary: isDark ? "#64748b" : "#94a3b8",
+        textPrimary: isDark ? "#f1f5f9" : "#1e293b",
+        textSecondary: isDark ? "#94a3b8" : "#475569",
+        textHalo: isDark ? "#0f172a" : "#ffffff",
+      };
+
+      const layers = [
+        { id: "background", type: "background", paint: { "background-color": colors.background }, metadata: { "meridian:group": "base" } },
+        { id: "landuse-residential", type: "fill", source: "openmaptiles", "source-layer": "landuse", filter: ["==", "class", "residential"], paint: { "fill-color": isDark ? "#141b24" : "#f0eee9", "fill-opacity": 0.6 }, metadata: { "meridian:group": "landuse" } },
+        { id: "landuse-park", type: "fill", source: "openmaptiles", "source-layer": "landuse", filter: ["in", "class", "park", "cemetery", "recreation_ground"], paint: { "fill-color": colors.park, "fill-opacity": 0.8 }, metadata: { "meridian:group": "landuse" } },
+        { id: "landcover-wood", type: "fill", source: "openmaptiles", "source-layer": "landcover", filter: ["==", "class", "wood"], paint: { "fill-color": colors.landcover, "fill-opacity": 0.7 }, metadata: { "meridian:group": "landuse" } },
+        { id: "water", type: "fill", source: "openmaptiles", "source-layer": "water", paint: { "fill-color": colors.water }, metadata: { "meridian:group": "water" } },
+        { id: "waterway", type: "line", source: "openmaptiles", "source-layer": "waterway", paint: { "line-color": colors.waterway, "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 14, 3] }, metadata: { "meridian:group": "water" } },
+        { id: "building", type: "fill", source: "openmaptiles", "source-layer": "building", minzoom: 13, paint: { "fill-color": colors.buildingFill, "fill-outline-color": colors.buildingStroke, "fill-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0.5, 14, 1.0] }, metadata: { "meridian:group": "buildings" } },
+        { id: "road-casing", type: "line", source: "openmaptiles", "source-layer": "transportation", paint: { "line-color": colors.roadCasing, "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.5, 10, 1.5, 14, ["match", ["get", "class"], ["motorway", "trunk"], 7, ["primary", "secondary"], 5, 3]] }, layout: { "line-cap": "round", "line-join": "round" }, metadata: { "meridian:group": "roads" } },
+        { id: "road-minor", type: "line", source: "openmaptiles", "source-layer": "transportation", filter: ["in", "class", "minor", "service", "track"], paint: { "line-color": colors.roadMinor, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.8, 14, 2.5] }, layout: { "line-cap": "round", "line-join": "round" }, metadata: { "meridian:group": "roads" } },
+        { id: "road-secondary-tertiary", type: "line", source: "openmaptiles", "source-layer": "transportation", filter: ["in", "class", "secondary", "tertiary"], paint: { "line-color": colors.roadSecondary, "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 14, 3.5] }, layout: { "line-cap": "round", "line-join": "round" }, metadata: { "meridian:group": "roads" } },
+        { id: "road-primary", type: "line", source: "openmaptiles", "source-layer": "transportation", filter: ["==", "class", "primary"], paint: { "line-color": colors.roadPrimary, "line-width": ["interpolate", ["linear"], ["zoom"], 7, 1.2, 14, 4.5] }, layout: { "line-cap": "round", "line-join": "round" }, metadata: { "meridian:group": "roads" } },
+        { id: "road-motorway", type: "line", source: "openmaptiles", "source-layer": "transportation", filter: ["in", "class", "motorway", "trunk"], paint: { "line-color": colors.roadMotorway, "line-width": ["interpolate", ["linear"], ["zoom"], 5, 1.5, 14, 6] }, layout: { "line-cap": "round", "line-join": "round" }, metadata: { "meridian:group": "roads" } },
+      ];
+
+      if (showAdmin) {
+        layers.push({ id: "admin-boundaries", type: "line", source: "openmaptiles", "source-layer": "boundary", paint: { "line-color": colors.adminBoundary, "line-dasharray": [2, 2], "line-width": 1.2 }, metadata: { "meridian:group": "admin" } });
+      }
+
+      layers.push(
+        { id: "road-label", type: "symbol", source: "openmaptiles", "source-layer": "transportation_name", minzoom: 12, layout: { "text-field": ["coalesce", ["get", "name:latin"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 11, "symbol-placement": "line" }, paint: { "text-color": colors.textSecondary, "text-halo-color": colors.textHalo, "text-halo-width": 1.0 }, metadata: { "meridian:group": "labels" } },
+        { id: "place-label", type: "symbol", source: "openmaptiles", "source-layer": "place", layout: { "text-field": ["coalesce", ["get", "name:latin"], ["get", "name"]], "text-font": ["Noto Sans Bold"], "text-size": ["interpolate", ["linear"], ["zoom"], 4, 11, 10, 14, 14, 18] }, paint: { "text-color": colors.textPrimary, "text-halo-color": colors.textHalo, "text-halo-width": 1.5 }, metadata: { "meridian:group": "labels" } }
+      );
+
+      return {
+        version: 8,
+        name: `Meridian ${isDark ? "Dark" : "Light"}`,
+        sources: {
+          openmaptiles: {
+            type: "vector",
+            url: `${TILES_BASE_URL}/vadodara.json`,
+            attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a> | <a href="https://www.openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a>',
+          },
+        },
+        glyphs: `${ASSETS_BASE_URL}/glyphs/{fontstack}/{range}.pbf`,
+        layers,
+      };
+    }
+
+    let currentTheme = "light";
+    let showAdmin = false;
+
+    const map = new maplibre-gl.Map({
+      container: "map",
+      style: generateStyle(currentTheme, showAdmin),
+      center: REGION_CENTER,
+      zoom: 12,
+      maxBounds: [72.95, 22.05, 73.45, 22.55],
+    });
+
+    map.addControl(new maplibre-gl.NavigationControl(), "top-right");
+
+    map.on("mousemove", (e) => {
+      const zoom = map.getZoom().toFixed(2);
+      const lng = e.lngLat.lng.toFixed(4);
+      const lat = e.lngLat.lat.toFixed(4);
+      document.getElementById("readout").innerText = `Zoom: ${zoom} | Lng: ${lng}, Lat: ${lat}`;
+    });
+
+    document.getElementById("themeSelector").addEventListener("change", (e) => {
+      currentTheme = e.target.value;
+      map.setStyle(generateStyle(currentTheme, showAdmin));
+    });
+
+    document.getElementById("fitRegionBtn").addEventListener("click", () => {
+      map.fitBounds(REGION_BBOX, { padding: 40, duration: 1000 });
+    });
+
+    // Layer toggling
+    function setGroupVisibility(group, visible) {
+      const style = map.getStyle();
+      if (!style || !style.layers) return;
+      for (const layer of style.layers) {
+        if (layer.metadata && layer.metadata["meridian:group"] === group) {
+          map.setLayoutProperty(layer.id, "visibility", visible ? "visible" : "none");
+        }
+      }
+    }
+
+    document.getElementById("toggleBuildings").addEventListener("change", (e) => setGroupVisibility("buildings", e.target.checked));
+    document.getElementById("toggleRoads").addEventListener("change", (e) => setGroupVisibility("roads", e.target.checked));
+    document.getElementById("toggleWater").addEventListener("change", (e) => setGroupVisibility("water", e.target.checked));
+    document.getElementById("toggleLanduse").addEventListener("change", (e) => setGroupVisibility("landuse", e.target.checked));
+    document.getElementById("toggleLabels").addEventListener("change", (e) => setGroupVisibility("labels", e.target.checked));
+    document.getElementById("toggleAdmin").addEventListener("change", (e) => {
+      showAdmin = e.target.checked;
+      map.setStyle(generateStyle(currentTheme, showAdmin));
+    });
+  </script>
+</body>
+</html>
