@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Map as MapLibreMap, ScaleControl, AttributionControl, Marker } from "maplibre-gl";
+import { Map as MapLibreMap, ScaleControl, AttributionControl, Marker, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+
+if (typeof window !== "undefined") {
+  setWorkerUrl("/maplibre-gl-worker.mjs");
+}
 import { buildStyle } from "@meridian/map-style";
 import { VADODARA_REGION, isCoordinateInRegion } from "@/lib/region";
 import { parseCameraHash, formatCameraHash } from "@/lib/map/camera";
