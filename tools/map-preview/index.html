@@ -137,7 +137,7 @@
     let currentTheme = "light";
     let showAdmin = false;
 
-    const map = new maplibre-gl.Map({
+    const map = new maplibregl.Map({
       container: "map",
       style: generateStyle(currentTheme, showAdmin),
       center: REGION_CENTER,
@@ -145,7 +145,7 @@
       maxBounds: [72.95, 22.05, 73.45, 22.55],
     });
 
-    map.addControl(new maplibre-gl.NavigationControl(), "top-right");
+    map.addControl(new maplibregl.NavigationControl(), "top-right");
 
     map.on("mousemove", (e) => {
       const zoom = map.getZoom().toFixed(2);
