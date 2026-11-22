@@ -1,0 +1,133 @@
+name: Meridian CI Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  js:
+    name: JavaScript & TypeScript Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.15.1
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm turbo run lint
+
+      - name: Typecheck
+        run: pnpm turbo run typecheck
+
+      - name: Unit Tests
+        run: pnpm turbo run test
+
+      - name: Build Web Application
+        run: pnpm turbo run build --filter=web
+
+  go:
+    name: Go Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'backend/go.mod'
+          cache-dependency-path: 'backend/go.sum'
+
+      - name: Go Vet
+        run: |
+          cd backend
+          go vet ./...
+
+      - name: GolangCI-Lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.5
+          working-directory: backend
+
+      - name: Go Unit Tests with Race Detector
+        run: |
+          cd backend
+          go test -race -v ./...
+
+      - name: Compile Backend Binaries
+        run: |
+          cd backend
+          go build -v ./cmd/api
+
+  compose-smoke:
+    name: Docker Compose Stack & Readiness Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go for Integration Tests
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'backend/go.mod'
+
+      - name: Execute Smoke Test
+        run: |
+          chmod +x ./scripts/smoke.sh
+          ./scripts/smoke.sh
+
+      - name: Run Backend Integration Tests
+        run: |
+          cd backend
+          go test -race -tags=integration -v ./...
+
+      - name: Teardown Stack
+        if: always()
+        run: |
+          docker compose -f infra/compose/docker-compose.yml down -v
+
+  mobile-typecheck:
+    name: Mobile Typecheck Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.15.1
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck Mobile App
+        run: pnpm --filter mobile typecheck

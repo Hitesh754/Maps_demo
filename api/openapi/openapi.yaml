@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Meridian Geospatial Intelligence Platform API
+  description: >
+    Baseline developer-facing and internal spatial APIs for the Meridian Platform.
+    Adheres strictly to RFC 9457 Problem Details for all HTTP error responses.
+  version: 0.1.0
+  contact:
+    name: Meridian Platform Team
+paths:
+  /healthz:
+    get:
+      summary: Liveness probe
+      description: Returns HTTP 200 if the process is up and running. Does not perform dependency probes.
+      operationId: getHealthz
+      responses:
+        '200':
+          description: Process is alive.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /readyz:
+    get:
+      summary: Readiness probe
+      description: Returns HTTP 200 if all core dependencies (PostgreSQL/PostGIS, NATS JetStream, S3 Object Storage) are reachable and healthy.
+      operationId: getReadyz
+      responses:
+        '200':
+          description: All dependencies are healthy and ready for traffic.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyResponse'
+        '503':
+          description: One or more dependencies failed readiness probes.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [ok]
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-11-22T20:00:00Z'
+
+    ReadyChecks:
+      type: object
+      required:
+        - postgres
+        - nats
+        - s3
+      properties:
+        postgres:
+          type: boolean
+          example: true
+        nats:
+          type: boolean
+          example: true
+        s3:
+          type: boolean
+          example: true
+
+    ReadyResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - checks
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-11-22T20:00:00Z'
+        checks:
+          $ref: '#/components/schemas/ReadyChecks'
+
+    InvalidParam:
+      type: object
+      required:
+        - name
+        - reason
+      properties:
+        name:
+          type: string
+          example: nats
+        reason:
+          type: string
+          example: connection refused
+
+    ProblemDetails:
+      type: object
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri
+          example: 'https://meridian.internal/errors/dependency-unavailable'
+        title:
+          type: string
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          example: 503
+        detail:
+          type: string
+          example: 'Readiness check failed for: nats'
+        instance:
+          type: string
+          example: /readyz
+        code:
+          type: string
+          example: DEPENDENCY_UNAVAILABLE
+        invalid_params:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvalidParam'

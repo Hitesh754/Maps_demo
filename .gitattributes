@@ -1,0 +1,15 @@
+# Enforce LF line endings for all text/source files across platforms
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pmtiles binary
+*.pbf binary
+*.wasm binary
+*.tar binary
+*.gz binary
+*.zip binary

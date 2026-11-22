@@ -1,0 +1,25 @@
+{
+  "name": "meridian-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.6.0",
+  "scripts": {
+    "dev:web": "turbo run dev --filter=web",
+    "dev:mobile": "turbo run start --filter=mobile",
+    "dev:stack": "docker compose -f infra/compose/docker-compose.yml up -d",
+    "dev:stack:down": "docker compose -f infra/compose/docker-compose.yml down",
+    "dev:stack:reset": "node ./scripts/dev-stack-reset.mjs",
+    "db:migrate": "docker compose -f infra/compose/docker-compose.yml run --rm migrate",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:integration": "powershell -ExecutionPolicy Bypass -Command \"cd backend; go test -race -tags=integration -v ./...\"",
+    "build": "turbo run build",
+    "verify": "node ./scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "turbo": "2.11.13",
+    "prettier": "3.5.3",
+    "typescript": "5.8.2"
+  }
+}
