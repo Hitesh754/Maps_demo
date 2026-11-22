@@ -46,25 +46,18 @@ docker compose -f $ComposeFile stop nats
 # 4. Verify /readyz returns 503 and RFC 9457 problem details naming nats
 Write-Host "4. Verifying /readyz returns 503 Service Unavailable with problem+json..."
 Start-Sleep -Seconds 2
-$DegradedVerified = $false
 
-try {
-    $resp = Invoke-WebRequest -Uri "$ApiUrl/readyz" -UseBasicParsing -TimeoutSec 3
-    Write-Error "Expected HTTP 503 but got $($resp.StatusCode)"
+$rawOutput = & curl.exe -s -w "`n%{http_code}" "$ApiUrl/readyz"
+$lines = $rawOutput -split "`n"
+$statusCode = ($lines[-1]).Trim()
+$body = ($lines[0..($lines.Length - 2)] -join "`n").Trim()
+
+if ($statusCode -eq "503" -and $body -match "nats") {
+    Write-Host "   Degraded state verified: HTTP 503 with body naming nats."
+    Write-Host "   Problem Body: $body"
+} else {
+    Write-Error "Unexpected response during outage: status=$statusCode, body=$body"
     exit 1
-} catch {
-    $statusCode = $_.Exception.Response.StatusCode.value__
-    $streamReader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
-    $body = $streamReader.ReadToEnd()
-    
-    if ($statusCode -eq 503 -and $body -match "nats") {
-        Write-Host "   Degraded state verified: HTTP 503 with body naming nats."
-        Write-Host "   Problem Body: $body"
-        $DegradedVerified = $true
-    } else {
-        Write-Error "Unexpected response during outage: status=$statusCode, body=$body"
-        exit 1
-    }
 }
 
 # 5. Restore NATS

@@ -14,8 +14,8 @@ Workspace reset on 2026-11-22; old project backed up outside the repo at `C:\Use
 | :---: | :--- | :---: | :---: | :--- |
 | **00** | Workspace Reconnaissance & Compatibility / Licence Verification | **complete** | 2026-11-22 | `docs/recon/*`, `docs/progress/P00-report.md` |
 | **01** | Architecture, ADRs, Domain Model, Conventions, Threat Model | **complete** | 2026-11-22 | `docs/architecture/*`, ADRs 0001–0025, `docs/progress/P01-report.md` |
-| **02** | Local Infrastructure & Docker Compose (PostGIS, NATS, Storage) | not started | — | — |
-| **03** | Basemap Generation Pipeline (Planetiler, PMTiles, go-pmtiles) | not started | — | — |
+| **02** | Local Infrastructure & Docker Compose (PostGIS, NATS, Storage) | **complete** | 2026-11-23 | `docs/progress/P02-report.md`, `docs/progress/P02W-report.md`, Compose stack, Go API skeleton, contracts, api-client, design-tokens, web, mobile |
+| **03** | Basemap Generation Pipeline (Planetiler, PMTiles, go-pmtiles) | in progress | — | Pending target region selection from human |
 | **04** | Web & Mobile Baseline Setup with MapLibre & Dev Client | not started | — | — |
 | **05** | Raw Observation Ingestion Service & Data Model | not started | — | — |
 | **06** | Spatial Indexing & H3 Aggregation (Go Backend) | not started | — | — |
