@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
+import { TooltipProvider } from "@meridian/ui";
 
 export const metadata: Metadata = {
   title: "Meridian | Geospatial Intelligence Platform",
@@ -33,7 +34,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="antialiased min-h-screen bg-[var(--color-level0)] text-[var(--color-text-primary)]">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
