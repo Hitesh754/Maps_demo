@@ -16,6 +16,7 @@ Workspace reset on 2026-11-22; old project backed up outside the repo at `C:\Use
 | **01** | Architecture, ADRs, Domain Model, Conventions, Threat Model | **complete** | 2026-11-22 | `docs/architecture/*`, ADRs 0001–0025, `docs/progress/P01-report.md` |
 | **02** | Local Infrastructure & Docker Compose (PostGIS, NATS, Storage) | **complete** | 2026-11-23 | `docs/progress/P02-report.md`, `docs/progress/P02W-report.md`, Compose stack, Go API skeleton, contracts, api-client, design-tokens, web, mobile |
 | **03** | Basemap Generation Pipeline (Planetiler, PMTiles, go-pmtiles) | **complete** | 2026-11-23 | `config/region.json`, `data/tiles/vadodara.pmtiles`, `data/region/vadodara.osm.pbf`, `packages/map-style`, `NOTICE`, `docs/data/*`, `docs/progress/P03-report.md` |
+| **13U** | UI-First Design System, Web Shell & Live Map Canvas | **complete** | 2026-11-23 | `docs/design/*`, `@meridian/ui`, `@meridian/design-tokens` (CVD tokens), `MapView.tsx`, Layer Registry, ADR-0026, ADR-0027, `docs/progress/P13U-report.md` |
 | **04** | Web & Mobile Baseline Setup with MapLibre & Dev Client | not started | — | — |
 | **05** | Raw Observation Ingestion Service & Data Model | not started | — | — |
 | **06** | Spatial Indexing & H3 Aggregation (Go Backend) | not started | — | — |

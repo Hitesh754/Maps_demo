@@ -30,6 +30,9 @@ All version entries have been checked against primary registry and repository so
 | **React DOM** | `19.3.1` | 2026-11 | https://registry.npmjs.org/react-dom | MIT | Peer of React 19.3.1. | **OK** |
 | **Tailwind CSS** | `4.3.5` | 2026-11 | https://registry.npmjs.org/tailwindcss | MIT | Next.js 16 compatible CSS styling engine. | **OK** |
 | **MapLibre GL JS** | `6.19.0` | 2026-11 | https://registry.npmjs.org/maplibre-gl | BSD-3-Clause | WebGL/WebGPU vector map renderer. Consumes PMTiles via vector tile protocol plugin. | **OK** |
+| **Radix UI Primitives** | `@radix-ui/react-*` (`1.1.x`) | 2026-11 | https://registry.npmjs.org/@radix-ui | MIT | Accessible unstyled headless components (Dialog, Tabs, Switch, Tooltip). React 19 verified. | **OK** |
+| **Lucide React** | `1.16.0` | 2026-11 | https://registry.npmjs.org/lucide-react | ISC | Feather-derived stroke icon suite matching cartographic aesthetic. | **OK** |
+| **clsx & tailwind-merge** | `2.1.1` / `3.0.2` | 2026-11 | https://registry.npmjs.org/clsx | MIT | Class utility mergers for dynamic Tailwind styling. | **OK** |
 
 ---
 

@@ -47,6 +47,20 @@ export const typography = {
   }
 } as const;
 
+export const shadows = {
+  shadowLevel0: "none",
+  shadowLevel1: "0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08)",
+  shadowLevel2: "0 4px 6px -1px rgb(0 0 0 / 0.12), 0 2px 4px -2px rgb(0 0 0 / 0.08)",
+  shadowLevel3: "0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.10)"
+} as const;
+
+export const breakpoints = {
+  mobile: "0px",
+  tablet: "640px",
+  desktop: "1024px",
+  wide: "1280px"
+} as const;
+
 export const zIndex = {
   base: 0,
   map: 10,
@@ -54,6 +68,13 @@ export const zIndex = {
   panel: 200,
   modal: 1000,
   toast: 2000
+} as const;
+
+export const motionDuration = {
+  instant: "0ms",
+  fast: "150ms",
+  normal: "250ms",
+  slow: "400ms"
 } as const;
 
 export const motion = {

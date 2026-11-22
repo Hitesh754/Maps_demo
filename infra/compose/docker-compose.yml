@@ -123,7 +123,7 @@ services:
     volumes:
       - ../../data/tiles:/tiles:ro
     healthcheck:
-      test: ["CMD", "go-pmtiles", "show", "/tiles/vadodara.pmtiles"]
+      test: ["CMD", "/go-pmtiles", "show", "/tiles/vadodara.pmtiles"]
       interval: 3s
       timeout: 3s
       retries: 5
